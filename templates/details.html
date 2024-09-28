@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Details</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Additional custom styles can be added here */
+        body {
+            padding: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mt-3">Request Details</h1>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Username:</strong> {{ username }}</p>
+                <p><strong>Section Title:</strong> {{ section_title }}</p>
+                <p><strong>Section Description:</strong> {{ section_description }}</p>
+                <p><strong>Days Requested:</strong> {{ days_requested }}</p>
+            </div>
+            <div class="col-md-6">
+                {% if request_obj.granted %}
+                <p>Status: Granted</p>
+                {% elif request_obj.rejected %}
+                <p>Status: Rejected</p>
+                {% elif request_obj.revoked %}
+                <p>Status: Revoked</p>
+                {% else %}
+                <p>Status: Pending</p>
+                {% endif %}
+                {% if not request_obj.granted and not request_obj.rejected and not request_obj.revoked %}
+                <form action="{{ url_for('grant_request', request_id=request_obj.id) }}" method="post">
+                    <button class="btn btn-success" type="submit">Grant</button>
+                </form>
+                <form action="{{ url_for('reject_request', request_id=request_obj.id) }}" method="post">
+                    <button class="btn btn-danger" type="submit">Reject</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

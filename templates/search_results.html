@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <!-- Responsive meta tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DigiLib - Search Results</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Custom styles -->
+    <style>
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1020;
+            /* Higher z-index to ensure navbar is above other content when scrolling */
+        }
+
+        @media (min-width: 992px) {
+            /* Large devices (desktops, 992px and up) */
+            .offcanvas {
+                display: block !important;
+            }
+        }
+
+        @media (max-width: 991.98px) {
+            /* Small to medium devices (tablets, less than 992px) */
+            .navbar-nav {
+                flex-direction: row;
+                overflow-x: auto;
+            }
+
+            .navbar-collapse {
+                position: fixed;
+                top: 56px;
+                /* Height of navbar */
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: white;
+                overflow-y: auto;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                display: none;
+                transition: transform 0.3s ease-out;
+                z-index: 1010;
+                /* Lower z-index than navbar to ensure it's below the navbar */
+            }
+
+            .navbar-collapse.show {
+                display: block;
+            }
+        }
+
+        footer {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.05);
+            padding: 10px;
+            text-align: center;
+        }
+
+        body {
+            padding-bottom: 70px;
+            /* Adjust based on footer height */
+        }
+
+        .circular-image {
+            /* Center the div */
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #ffffff54;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        }
+
+        .cover-image {
+            /* Center the div */
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 200px;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .card {
+            width: calc(100% / 3 - 20px);
+            /* Adjust the width to fit three cards in one line */
+            margin: 10px;
+            /* Adjust the margin between cards */
+        }
+
+        .card-image {
+            width: 100%;
+            /* Adjust the width of the card image */
+            height: 280px;
+            /* Adjust the height of the card image */
+            background-size: cover;
+            /* Ensure the entire image covers the container */
+            background-position: center;
+            /* Center the image within the card */
+            border-radius: 10px;
+            /* Rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            /* Shadow for depth */
+        }
+
+        .card-title {
+            font-size: 1rem;
+            /* Adjust the font size of the title */
+            margin-top: 10px;
+            /* Spacing between title and other content */
+        }
+
+        .card-text {
+            margin-bottom: 5px;
+            /* Spacing between text paragraphs */
+        }
+
+        .card-actions {
+            margin-top: 10px;
+            /* Spacing between actions and other content */
+        }
+
+        .card-actions button {
+            margin-right: 5px;
+            /* Spacing between buttons */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar with Search and Account Links -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav me-auto">
+                    <!-- Additional navbar items can be added here -->
+                </ul>
+
+                <form action="/search" method="GET" class="d-flex mx-2 my-2 my-lg-0">
+                    <select class="form-select me-2" aria-label="Search Options" name="search_option">
+                        <option value="section">Section</option>
+                        <option value="book">Book</option>
+                        <option value="author">Author</option>
+                    </select>
+                    <input class="form-control me-2" type="search" placeholder="Search..." aria-label="Search"
+                        name="q" value="">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </form>
+
+
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/user_dashboard">My Books</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/dashboard">Books</a>
+                    </li>
+                   
+                
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login">Logout</a>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content Area -->
+    <main role="main" class="container mt-4">
+        <div class="container">
+            <h2>Search Results</h2>
+            <div class="row">
+                {% for section in search_results %}
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="card-image" style="background-image: url('{{ section.image_url }}');"></div>
+                        <h5 class="card-title">{{ section.title }}</h5>
+                        <p class="card-text">{{ section.section }}</p>
+                        <p class="card-text">{{ section.author }}</p>
+                        <p class="card-text">{{ section.description }}</p>
+                        <p class="card-text">Date Created: {{ section.date_created }}</p>
+                        <a href="/section_details/{{ section.id }}" class="btn btn-primary">Details</a>
+                        <form action="/request_section/{{ section.id }}" method="post">
+                            <label for="days_requested">Number of Days:</label>
+                            <input type="number" id="days_requested" name="days_requested" required>
+                            <button type="submit" class="btn btn-primary">Request Section</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+       
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center text-lg-start mt-4">
+        <div class="text-center p-3">
+            © 2024 DigiLib - Library Management System | MOHD HASHIR
+        </div>
+    </footer>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eNfN6jIeHz"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
